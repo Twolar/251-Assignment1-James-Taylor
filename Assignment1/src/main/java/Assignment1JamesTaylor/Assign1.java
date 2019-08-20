@@ -17,6 +17,7 @@ public class Assign1 extends JFrame implements ActionListener{
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(800, 600);
 
+        
         // This creates the main menu bar
 		JMenuBar menuBar = new JMenuBar();
         this.setJMenuBar(menuBar);
@@ -38,7 +39,6 @@ public class Assign1 extends JFrame implements ActionListener{
         menuBar.add(exitOption);
 
 
-
         // this create the sub menu for the option "File" in the main menu bar
         JMenu newOption = new JMenu("New");
         JMenu openOption = new JMenu("Open");
@@ -49,13 +49,12 @@ public class Assign1 extends JFrame implements ActionListener{
         fileOption.add(saveOption);
         fileOption.add(printOption);
 
-        // assign the menu bar to the window/frame
-        this.setJMenuBar(menuBar);
 
         // Create and add the text area
         JTextArea textArea;
         textArea = new JTextArea();
         this.add(textArea);
+
 
         // Make the window/frame visible.
         this.setVisible(true);
