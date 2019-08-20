@@ -33,6 +33,9 @@ public class Assign1 extends JFrame implements ActionListener{
         fileOption.add(openOption);
         fileOption.add(saveOption);
 
+        JTextArea textArea;
+        textArea = new JTextArea();
+        this.add(textArea);
 
         // assign the menu bar to the window/frame
         this.setJMenuBar(menuBar);
