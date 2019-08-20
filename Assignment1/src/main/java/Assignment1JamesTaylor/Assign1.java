@@ -4,7 +4,7 @@ package Assignment1JamesTaylor;
  * Hello world!
  *
  */
-public class App 
+public class Assign1 
 {
     public static void main( String[] args )
     {
