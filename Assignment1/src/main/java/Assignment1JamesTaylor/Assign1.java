@@ -11,8 +11,8 @@ import java.awt.event.*;
  */
 public class Assign1 extends JFrame implements ActionListener{
     private JMenuBar menuBar; 
-    private JMenu fileOption, searchOption, viewOption, manageOption, helpOption;
-    private JMenuItem newOption, saveOption, openOption, exitOption;
+    private JMenu fileOption, searchOption, viewOption, manageOption, helpOption, aboutOption;
+    private JMenuItem newOption, saveOption, openOption, printOption, exitOption;
     public Assign1(){
         // create the frame
         super("[Scribe]");
@@ -30,6 +30,7 @@ public class Assign1 extends JFrame implements ActionListener{
         viewOption = new JMenu("View");
         manageOption = new JMenu("Manage");
         helpOption = new JMenu("Help");
+        aboutOption = new JMenu("About");
 
 		JMenuBar menuBar = new JMenuBar();
         this.setJMenuBar(menuBar);
@@ -38,27 +39,15 @@ public class Assign1 extends JFrame implements ActionListener{
         menuBar.add(viewOption);
         menuBar.add(manageOption);
         menuBar.add(helpOption);
-
-
-        // Create sub menu option "Search" of the main menu bar
-        JMenu searchOption = new JMenu("Search");
-        menuBar.add(searchOption);
-
-        // Create sub menu option "About" of the main menu bar
-        JMenu aboutOption = new JMenu("About");
         menuBar.add(aboutOption);
-
-        // Create sub menu option "exit" of the main menu bar
-        JMenu exitOption = new JMenu("Exit");
-        menuBar.add(exitOption);
-
 
         // this create the sub menu for the option "File" in the main menu bar
         newOption = new JMenuItem("New");
         openOption = new JMenuItem("Open");
         saveOption = new JMenuItem("Save");
-        printOption = new JMenu("Print");
+        printOption = new JMenuItem("Print");
         exitOption = new JMenuItem("Exit");
+
         fileOption.add(newOption);
         fileOption.add(openOption);
         fileOption.add(saveOption);
