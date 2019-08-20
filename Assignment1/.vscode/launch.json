@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - Assign1",
+            "request": "launch",
+            "mainClass": "Assignment1JamesTaylor.Assign1",
+            "projectName": "Assignment1"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - Assignment1",
             "request": "launch",
             "mainClass": "Assignment1JamesTaylor.Assignment1",
