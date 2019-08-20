@@ -19,24 +19,40 @@ public class Assign1 extends JFrame implements ActionListener{
 
         // This creates the main menu bar
 		JMenuBar menuBar = new JMenuBar();
-		this.setJMenuBar(menuBar);
+        this.setJMenuBar(menuBar);
 
-        // This creates a sub menu option "File" of the main menu bar 
+        // Create sub menu option "File" of the main menu bar 
         JMenu fileOption = new JMenu("File");
         menuBar.add(fileOption);
+
+        // Create sub menu option "Search" of the main menu bar
+        JMenu searchOption = new JMenu("Search");
+        menuBar.add(searchOption);
+
+        // Create sub menu option "About" of the main menu bar
+        JMenu aboutOption = new JMenu("About");
+        menuBar.add(aboutOption);
+
+        // Create sub menu option "exit" of the main menu bar
+        JMenu exitOption = new JMenu("Exit");
+        menuBar.add(exitOption);
+
+
 
         // this create the sub menu for the option "File" in the main menu bar
         JMenu newOption = new JMenu("New");
         JMenu openOption = new JMenu("Open");
         JMenu saveOption = new JMenu("Save");
+        JMenu printOption = new JMenu("Print");
         fileOption.add(newOption);
         fileOption.add(openOption);
         fileOption.add(saveOption);
+        fileOption.add(printOption);
 
         // assign the menu bar to the window/frame
         this.setJMenuBar(menuBar);
 
-        // Create text area
+        // Create and add the text area
         JTextArea textArea;
         textArea = new JTextArea();
         this.add(textArea);
