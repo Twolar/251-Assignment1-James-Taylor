@@ -11,8 +11,8 @@ import java.awt.event.*;
  */
 public class Assign1 extends JFrame implements ActionListener{
     private JMenuBar menuBar; 
-    private JMenu fileOption, searchOption, viewOption, manageOption, helpOption, aboutOption;
-    private JMenuItem newOption, saveOption, openOption, printOption, exitOption;
+    private JMenu fileOption, editOption, searchOption, aboutOption;
+    private JMenuItem newOption, saveOption, openOption, printOption, exitOption, selectOption, copyOption, pasteOption, cutOption, timeOption, infoOption;
     public Assign1(){
         // create the frame
         super("[Scribe]");
@@ -26,19 +26,15 @@ public class Assign1 extends JFrame implements ActionListener{
 
         // This creates a sub menu option "File" of the main menu bar 
         fileOption = new JMenu("File");
+        editOption = new JMenu("Edit");
         searchOption = new JMenu("Search");
-        viewOption = new JMenu("View");
-        manageOption = new JMenu("Manage");
-        helpOption = new JMenu("Help");
         aboutOption = new JMenu("About");
 
 		JMenuBar menuBar = new JMenuBar();
         this.setJMenuBar(menuBar);
         menuBar.add(fileOption);
+        menuBar.add(editOption);
         menuBar.add(searchOption);
-        menuBar.add(viewOption);
-        menuBar.add(manageOption);
-        menuBar.add(helpOption);
         menuBar.add(aboutOption);
 
         // this create the sub menu for the option "File" in the main menu bar
@@ -53,6 +49,22 @@ public class Assign1 extends JFrame implements ActionListener{
         fileOption.add(saveOption);
         fileOption.add(printOption);
         fileOption.add(exitOption);
+
+        // this create the sub menu for the option "Edit" in the main menu bar
+        selectOption = new JMenuItem("Select");
+        copyOption = new JMenuItem("Copy");
+        pasteOption = new JMenuItem("Paste");
+        cutOption = new JMenuItem("Cut");
+        editOption.add(selectOption);
+        editOption.add(copyOption);
+        editOption.add(pasteOption);
+        editOption.add(cutOption);
+
+        // this create the sub menu for the option "About" in the main menu bar
+        timeOption = new JMenuItem("Time and Date");
+        infoOption = new JMenuItem("Info");
+        aboutOption.add(timeOption);
+        aboutOption.add(infoOption);
 
 
         //Action listners
