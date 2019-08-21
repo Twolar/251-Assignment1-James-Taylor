@@ -17,6 +17,7 @@ public class Assign1 extends JFrame implements ActionListener{
     private JMenu fileOption, editOption, searchOption, aboutOption;
     private JMenuItem newOption, saveOption, openOption, printOption, exitOption, selectOption, copyOption, pasteOption, cutOption, timeOption, infoOption;
     private JFrame popUp;
+    private  JTextArea textArea;
     public Assign1(){
         // create the frame
         super("[Scribe]");
@@ -95,14 +96,20 @@ public class Assign1 extends JFrame implements ActionListener{
         infoOption.addActionListener(this);
 
         // Create and add the text area
-        JTextArea textArea;
         textArea = new JTextArea();
-        this.add(textArea);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        this.add(scrollPane);
 
 
         // Make the window/frame visible.
         this.setVisible(true);
     }
+    void clearScreen(){
+        textArea.setText("");
+    }
+
+
+
     public void actionPerformed(ActionEvent event) {
         // Get event
         JComponent source = (JComponent) event.getSource();
@@ -135,6 +142,30 @@ public class Assign1 extends JFrame implements ActionListener{
             //New Button clicked
         }else if(source == openOption){
             //Open Button clicked
+            clearScreen();
+            JFileChooser fileChooser = new JFileChooser("./");
+            int result = fileChooser.showOpenDialog(this);
+            if(result == JFileChooser.APPROVE_OPTION){
+                File selectedFile = fileChooser.getSelectedFile();
+                try{
+                    FileReader fReader = new FileReader(selectedFile);
+                    BufferedReader bReader = new BufferedReader(fReader);
+                    String str = "";
+                    while((str = bReader.readLine() ) != null){
+                        textArea.append(str);
+                        textArea.append("\n");
+                    }
+                    bReader.close();
+                
+                }catch(FileNotFoundException e){
+                    System.out.println("Error: File not found.");
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+
+            }else{
+                System.out.println("Error: Could not open file.");
+            }
         }else if(source == saveOption){
             //Save Button clicked
         }else if(source == printOption){
