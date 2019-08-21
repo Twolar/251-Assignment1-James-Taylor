@@ -1,13 +1,15 @@
 package Assignment1JamesTaylor;
 
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-
 import java.awt.event.*;
 
 /**
@@ -59,7 +61,7 @@ public class Assign1 extends JFrame implements ActionListener{
         fileOption.add(exitOption);
 
         // this create the sub menu for the option "Edit" in the main menu bar
-        selectOption = new JMenuItem("Select");
+        selectOption = new JMenuItem("Select All");
         copyOption = new JMenuItem("Copy");
         pasteOption = new JMenuItem("Paste");
         cutOption = new JMenuItem("Cut");
@@ -192,10 +194,23 @@ public class Assign1 extends JFrame implements ActionListener{
             System.exit(0);
         }else if(source == selectOption){
             //Select Button clicked
+            textArea.selectAll();
         }else if(source == copyOption){
             //Copy Button clicked
+            String text  = textArea.getSelectedText();
+            Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+            StringSelection data = new StringSelection(text);
+            clip.setContents(data, null);
+
         }else if(source == pasteOption){
             //Paste Button clicked
+            try {
+                String text = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+                textArea.append(text);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }else if(source == cutOption){
             //Cut Button clicked
         }else if(source == searchOption){
