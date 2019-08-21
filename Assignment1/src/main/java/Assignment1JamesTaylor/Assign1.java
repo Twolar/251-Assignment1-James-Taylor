@@ -73,7 +73,24 @@ public class Assign1 extends JFrame implements ActionListener{
 
 
         //Action listners
+
+        //File
+        newOption.addActionListener(this);
+        saveOption.addActionListener(this);
+        openOption.addActionListener(this);
+        printOption.addActionListener(this);
         exitOption.addActionListener(this);
+
+        //Edit
+        selectOption.addActionListener(this);
+        copyOption.addActionListener(this);
+        pasteOption.addActionListener(this);
+        cutOption.addActionListener(this);
+
+        //Search
+        searchOption.addActionListener(this);
+
+        //About
         timeOption.addActionListener(this);
         infoOption.addActionListener(this);
 
@@ -89,31 +106,20 @@ public class Assign1 extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent event) {
         // Get event
         JComponent source = (JComponent) event.getSource();
-
-        // If user clicks exit option
-        if(source == exitOption){
-            System.exit(0);
-        }
-
         // If user clicks Date & Time option
         if(source == timeOption){
-                // Grab the current Date & Time, then format it into a string
-                LocalDateTime nowDateTime = LocalDateTime.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
-                String formattedDateTime = nowDateTime.format(formatter);
-                // System.out.println(formattedDateTime); // DEBUG
-
-                // Changes the title of the window to include the Time & Date
-                this.setTitle("[Scribe] " + formattedDateTime);
-        }
-
-        // If user clicks Info option
-        if(source == infoOption){
+            // Grab the current Date & Time, then format it into a string
+            LocalDateTime nowDateTime = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
+            String formattedDateTime = nowDateTime.format(formatter);
+            // Changes the title of the window to include the Time & Date
+            this.setTitle("[Scribe] Date: " + formattedDateTime);
+        }else if(source == infoOption){ // If user clicks Info option
             // Create new JFrame for Popup
             popUp = new JFrame("Info");
             popUp.setTitle("Info");
             popUp.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            popUp.setSize(425, 50);
+            popUp.setSize(400, 200);
             popUp.setLocationRelativeTo(null);
             
             // Pop Up Text
@@ -125,8 +131,28 @@ public class Assign1 extends JFrame implements ActionListener{
             popUp.add(popUpPanel);
 
             popUp.setVisible(true);
+        }else if(source == newOption){
+            //New Button clicked
+        }else if(source == openOption){
+            //Open Button clicked
+        }else if(source == saveOption){
+            //Save Button clicked
+        }else if(source == printOption){
+            //Print Button clicked
+        }else if(source == exitOption){
+            //Exit Button clicked
+            System.exit(0);
+        }else if(source == selectOption){
+            //Select Button clicked
+        }else if(source == copyOption){
+            //Copy Button clicked
+        }else if(source == pasteOption){
+            //Paste Button clicked
+        }else if(source == cutOption){
+            //Cut Button clicked
+        }else if(source == searchOption){
+          
         }
-
     }
     public static void main( String[] args )
     {
