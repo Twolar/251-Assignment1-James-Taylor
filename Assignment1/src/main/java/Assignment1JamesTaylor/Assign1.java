@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+
 import java.awt.event.*;
 
 /**
@@ -46,7 +48,7 @@ public class Assign1 extends JFrame implements ActionListener{
         // this create the sub menu for the option "File" in the main menu bar
         newOption = new JMenuItem("New");
         openOption = new JMenuItem("Open");
-        saveOption = new JMenuItem("Save");
+        saveOption = new JMenuItem("Save As");
         printOption = new JMenuItem("Print");
         exitOption = new JMenuItem("Exit");
 
@@ -140,13 +142,14 @@ public class Assign1 extends JFrame implements ActionListener{
             popUp.setVisible(true);
         }else if(source == newOption){
             //New Button clicked
+            clearScreen();//change me
         }else if(source == openOption){
             //Open Button clicked
             clearScreen();
-            JFileChooser fileChooser = new JFileChooser("./");
-            int result = fileChooser.showOpenDialog(this);
+            JFileChooser openFileChooser = new JFileChooser("./");
+            int result = openFileChooser.showOpenDialog(this);
             if(result == JFileChooser.APPROVE_OPTION){
-                File selectedFile = fileChooser.getSelectedFile();
+                File selectedFile = openFileChooser.getSelectedFile();
                 try{
                     FileReader fReader = new FileReader(selectedFile);
                     BufferedReader bReader = new BufferedReader(fReader);
@@ -168,6 +171,20 @@ public class Assign1 extends JFrame implements ActionListener{
             }
         }else if(source == saveOption){
             //Save Button clicked
+            JFileChooser saveFileChooser = new JFileChooser("./");
+            int result = saveFileChooser.showSaveDialog(this);
+            if(result == JFileChooser.APPROVE_OPTION){
+                File newFile = saveFileChooser.getSelectedFile();
+                try{
+                    FileWriter fWriter = new FileWriter(newFile);
+                    BufferedWriter bWriter = new BufferedWriter(fWriter);
+                    String fileContents = textArea.getText().replaceAll("\n", System.lineSeparator());
+                    bWriter.write(fileContents, 0, fileContents.length());
+                    bWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }else if(source == printOption){
             //Print Button clicked
         }else if(source == exitOption){
