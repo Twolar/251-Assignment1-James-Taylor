@@ -20,10 +20,13 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import org.apache.commons.io.FilenameUtils;
+import org.fife.ui.rtextarea.*;
+import org.fife.ui.rsyntaxtextarea.*;
 
 import javax.swing.*;
 
 import java.awt.event.*;
+
 
 /**
  * Hello world!
@@ -257,7 +260,7 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
                     String str = "";
                     while((str = bReader.readLine() ) != null){
                         document.insertString(document.getLength(), str+"\n", null);
-                        insertWithColor(str);
+                        //insertWithColor(str);
                     }
                     bReader.close();
                 
