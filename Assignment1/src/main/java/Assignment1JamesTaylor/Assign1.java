@@ -31,10 +31,14 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
     private JTextField searchInputField;
     private JButton searchGoButton;
     private  JTextPane textPane;
+    private String prevSearchQueryText;
+    private String searchQueryText;
     
     //Attributes
     private SimpleAttributeSet blueText;
     private SimpleAttributeSet orangeText;
+    private SimpleAttributeSet highlightedText;
+    private SimpleAttributeSet clearBackgroundColor;
     private StyledDocument document;
     
     public Assign1(){
@@ -130,6 +134,10 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
         StyleConstants.setForeground(blueText, Color.BLUE);
         orangeText = new SimpleAttributeSet();
         StyleConstants.setForeground(orangeText, Color.ORANGE);
+        highlightedText = new SimpleAttributeSet();
+        StyleConstants.setBackground(highlightedText, Color.cyan);
+        clearBackgroundColor = new SimpleAttributeSet();
+        StyleConstants.setBackground(clearBackgroundColor, new Color(0, 0, 0, 0));
 
         // Make the window/frame visible.
         this.setVisible(true);
@@ -267,10 +275,23 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
         }else if(source == cutOption){
             //Cut Button clicked
         }else if(source.equals(searchGoButton)){
-            // Read what ever is in searchTextField into a string if Go is pressed
-            String searchQueryText;
+            // Read what ever is in searchTextField into a string if Go is presse
+            prevSearchQueryText = searchQueryText;
+            if(prevSearchQueryText != null){
+                document.setCharacterAttributes(0, document.getLength(), clearBackgroundColor, false);
+            }
             searchQueryText = searchInputField.getText();
+
+             
             System.out.println("Search Query: " + searchQueryText); // DEBUG
+            try {
+                for (int i = -1; (i = document.getText(0, document.getLength()).indexOf(searchQueryText,i + 1)) != -1; i++) {
+
+                    document.setCharacterAttributes(i, searchQueryText.length(), highlightedText, false);
+                }
+            } catch (BadLocationException e) {
+                e.printStackTrace();
+            }
 
         }
     }
