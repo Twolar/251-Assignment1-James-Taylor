@@ -4,24 +4,36 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.StringTokenizer;
+import java.awt.Color;
 
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import javax.swing.*;
+
 import java.awt.event.*;
 
 /**
  * Hello world!
  *
  */
-public class Assign1 extends JFrame implements ActionListener{
+public class Assign1 extends JFrame implements ActionListener, KeyListener{
     private JMenuBar menuBar; 
     private JMenu fileOption, editOption, searchOption, aboutOption;
     private JMenuItem newOption, saveOption, openOption, printOption, exitOption, selectOption, copyOption, pasteOption, cutOption, timeOption, infoOption;
     private JFrame popUp;
-    private  JTextArea textArea;
+    private  JTextPane textPane;
+    
+    //Attributes
+    private SimpleAttributeSet blueText;
+    private SimpleAttributeSet orangeText;
+    private StyledDocument document;
+
     public Assign1(){
         // create the frame
         super("[Scribe]");
@@ -100,24 +112,59 @@ public class Assign1 extends JFrame implements ActionListener{
         infoOption.addActionListener(this);
 
         // Create and add the text area
-        textArea = new JTextArea();
-        JScrollPane scrollPane = new JScrollPane(textArea);
+        textPane = new JTextPane();
+        textPane.addKeyListener(this);
+        JScrollPane scrollPane = new JScrollPane(textPane);
         this.add(scrollPane);
-
+        document = textPane.getStyledDocument();
+        
+        //Init attributes/styles here
+        blueText = new SimpleAttributeSet();
+        StyleConstants.setForeground(blueText, Color.BLUE);
+        orangeText = new SimpleAttributeSet();
+        StyleConstants.setForeground(orangeText, Color.ORANGE);
 
         // Make the window/frame visible.
         this.setVisible(true);
     }
     void clearScreen(){
-        textArea.setText("");
+        textPane.setText("");
     }
 
-
+    void insertWithColor(String str){
+        String[] arrayOfKeywords = {"void", "public", "private"};
+        StringTokenizer strtok = new StringTokenizer(str);
+        try{
+            while(strtok.hasMoreTokens()){
+                String currentStr = strtok.nextToken();
+                boolean isKeyword = false;
+                for(int i = 0; i<arrayOfKeywords.length; i++){
+                    
+                    if(currentStr.equals(arrayOfKeywords[i])){
+                        isKeyword = true;
+                    }
+                }
+                if(isKeyword){
+                    document.insertString(document.getLength(), currentStr+" ", blueText);
+                }else{
+                    document.insertString(document.getLength(), currentStr+" ", null);
+                }
+                
+        
+            }
+            document.insertString(document.getLength(), "\n", null);
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void actionPerformed(ActionEvent event) {
         // Get event
         JComponent source = (JComponent) event.getSource();
         // If user clicks Date & Time option
+
+
+
         if(source == timeOption){
             // Grab the current Date & Time, then format it into a string
             LocalDateTime nowDateTime = LocalDateTime.now();
@@ -147,6 +194,7 @@ public class Assign1 extends JFrame implements ActionListener{
             clearScreen();//change me
         }else if(source == openOption){
             //Open Button clicked
+
             clearScreen();
             JFileChooser openFileChooser = new JFileChooser("./");
             int result = openFileChooser.showOpenDialog(this);
@@ -157,14 +205,14 @@ public class Assign1 extends JFrame implements ActionListener{
                     BufferedReader bReader = new BufferedReader(fReader);
                     String str = "";
                     while((str = bReader.readLine() ) != null){
-                        textArea.append(str);
-                        textArea.append("\n");
+                        //document.insertString(document.getLength(), str+"\n", null);
+                        insertWithColor(str);
                     }
                     bReader.close();
                 
                 }catch(FileNotFoundException e){
                     System.out.println("Error: File not found.");
-                }catch(IOException e){
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
 
@@ -180,7 +228,7 @@ public class Assign1 extends JFrame implements ActionListener{
                 try{
                     FileWriter fWriter = new FileWriter(newFile);
                     BufferedWriter bWriter = new BufferedWriter(fWriter);
-                    String fileContents = textArea.getText().replaceAll("\n", System.lineSeparator());
+                    String fileContents = textPane.getText().replaceAll("\n", System.lineSeparator());
                     bWriter.write(fileContents, 0, fileContents.length());
                     bWriter.close();
                 } catch (IOException e) {
@@ -194,10 +242,13 @@ public class Assign1 extends JFrame implements ActionListener{
             System.exit(0);
         }else if(source == selectOption){
             //Select Button clicked
-            textArea.selectAll();
+            textPane.selectAll();
+            //StyleConstants.setForeground(blueText, Color.BLUE);
+            document.setCharacterAttributes(0, document.getLength(), blueText, true);
+            
         }else if(source == copyOption){
             //Copy Button clicked
-            String text  = textArea.getSelectedText();
+            String text  = textPane.getSelectedText();
             Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
             StringSelection data = new StringSelection(text);
             clip.setContents(data, null);
@@ -206,7 +257,7 @@ public class Assign1 extends JFrame implements ActionListener{
             //Paste Button clicked
             try {
                 String text = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
-                textArea.append(text);
+                document.insertString(document.getLength(), text, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -222,4 +273,35 @@ public class Assign1 extends JFrame implements ActionListener{
         System.out.println( "Starting App..." );
         new Assign1();
     }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        /*
+        System.out.print(e.getKeyChar());
+        if((e.getKeyChar() == '(')||(e.getKeyChar() == ')')){
+            //set ( and ) to orange
+            changeCharacterColor(orangeText);  
+        }else{
+            changeCharacterColor(blueText);
+        }
+        */
+        
+    }
+
+    public void changeCharacterColor(SimpleAttributeSet attr){
+        document.setCharacterAttributes(document.getLength()-1, 1, attr, false); 
+
+    }
+
+    
 }
