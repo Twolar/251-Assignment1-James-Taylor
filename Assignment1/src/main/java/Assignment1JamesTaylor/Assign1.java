@@ -18,10 +18,13 @@ import java.awt.event.*;
  */
 public class Assign1 extends JFrame implements ActionListener{
     private JMenuBar menuBar; 
-    private JMenu fileOption, editOption, searchOption, aboutOption;
+    private JMenu fileOption, editOption,  aboutOption, searchOption;
     private JMenuItem newOption, saveOption, openOption, printOption, exitOption, selectOption, copyOption, pasteOption, cutOption, timeOption, infoOption;
     private JFrame popUp;
-    private  JTextArea textArea;
+    private JTextArea textArea;
+    private JPanel searchDropDownPanel;
+    private JTextField searchInputField;
+    private JButton searchGoButton;
     public Assign1(){
         // create the frame
         super("[Scribe]");
@@ -29,24 +32,28 @@ public class Assign1 extends JFrame implements ActionListener{
         this.setSize(800, 600);
         this.setLocationRelativeTo(null);
 
-        
-        // This creates the main menu bar
-		menuBar = new JMenuBar();
-		this.setJMenuBar(menuBar);
-
-        // This creates a sub menu option "File" of the main menu bar 
+        // This creates main menu bar options 
         fileOption = new JMenu("File");
         editOption = new JMenu("Edit");
         searchOption = new JMenu("Search");
         aboutOption = new JMenu("About");
 
-		JMenuBar menuBar = new JMenuBar();
+	 // Create main menuBar and add options to it
+	menuBar = new JMenuBar();
         this.setJMenuBar(menuBar);
         menuBar.add(fileOption);
         menuBar.add(editOption);
-        menuBar.add(searchOption);
         menuBar.add(aboutOption);
-
+        menuBar.add(searchOption);
+	    
+	// Create search dropdown panel and add to menuBar search
+        searchDropDownPanel = new JPanel();
+        searchInputField = new JTextField(30);
+        searchGoButton = new JButton("Go");
+        searchDropDownPanel.add(searchInputField);
+        searchDropDownPanel.add(searchGoButton);
+        searchOption.add(searchDropDownPanel);
+        
         // this create the sub menu for the option "File" in the main menu bar
         newOption = new JMenuItem("New");
         openOption = new JMenuItem("Open");
@@ -93,7 +100,7 @@ public class Assign1 extends JFrame implements ActionListener{
         cutOption.addActionListener(this);
 
         //Search
-        searchOption.addActionListener(this);
+        searchGoButton.addActionListener(this);
 
         //About
         timeOption.addActionListener(this);
@@ -213,8 +220,12 @@ public class Assign1 extends JFrame implements ActionListener{
 
         }else if(source == cutOption){
             //Cut Button clicked
-        }else if(source == searchOption){
-          
+        }else if(source.equals(searchGoButton)){
+            // Read what ever is in searchTextField into a string if Go is pressed
+            String searchQueryText;
+            searchQueryText = searchInputField.getText();
+            System.out.println("Search Query: " + searchQueryText); // DEBUG
+
         }
     }
     public static void main( String[] args )
