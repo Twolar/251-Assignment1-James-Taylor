@@ -7,7 +7,6 @@ import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.StringTokenizer;
 import java.awt.Color;
 
 import javax.swing.text.BadLocationException;
@@ -132,14 +131,20 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
     }
 
     void insertWithColor(String str){
-        String[] arrayOfKeywords = {"void", "public", "private"};
+        String[] arrayOfKeywords = {"void", "public", "private","int", "this", "true", "false"};
         String keyword = "";
+        String notAllowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12234567890";
         int pos = 0;
         for(int x = 0; x<arrayOfKeywords.length; x++){
             keyword = arrayOfKeywords[x];
             for (int i = -1; (i = str.indexOf(keyword, i + 1)) != -1; i++) {
-                pos = ((document.getLength()-str.length())+i)-1;
-                document.setCharacterAttributes(pos, keyword.length()+1, blueText, false);
+                if((i <= 1)||((i+keyword.length()) >= document.getLength())){
+                    pos = ((document.getLength()-str.length())+i)-1;
+                    document.setCharacterAttributes(pos, keyword.length(), blueText, false);
+                }else if(((notAllowed.indexOf(str.charAt(i-1))) == -1) && ((notAllowed.indexOf(str.charAt(i+keyword.length()))) == -1)){
+                    pos = ((document.getLength()-str.length())+i)-1;
+                    document.setCharacterAttributes(pos, keyword.length(), blueText, false);
+                }
             } 
         }
     }
