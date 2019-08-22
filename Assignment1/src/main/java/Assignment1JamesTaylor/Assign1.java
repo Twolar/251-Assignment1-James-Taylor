@@ -304,7 +304,7 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
                 }
 
 
-                // create output stream to newfile based off whats typed or selected in saveDialog
+                // create output stream to newfile based off whats typed or selected as the save file name in saveDialog
                 OutputStream newsFileOutputStream = null;
                 try {
                     newsFileOutputStream = new FileOutputStream(newFile);
