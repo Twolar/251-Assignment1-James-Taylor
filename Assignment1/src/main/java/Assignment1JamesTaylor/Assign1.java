@@ -151,7 +151,7 @@ public class Assign1 extends JFrame implements ActionListener{
             popUp.setVisible(true);
         }else if(source == newOption){
             //New Button clicked
-            clearScreen();//change me
+            new Assign1();
         }else if(source == openOption){
             //Open Button clicked
             clearScreen();
