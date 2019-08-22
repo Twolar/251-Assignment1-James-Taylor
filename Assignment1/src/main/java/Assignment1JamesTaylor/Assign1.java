@@ -13,6 +13,14 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import org.apache.commons.io.FilenameUtils;
+
 import javax.swing.*;
 
 import java.awt.event.*;
@@ -24,9 +32,8 @@ import java.awt.event.*;
 public class Assign1 extends JFrame implements ActionListener, KeyListener{
     private JMenuBar menuBar; 
     private JMenu fileOption, editOption,  aboutOption, searchOption;
-    private JMenuItem newOption, saveOption, openOption, printOption, exitOption, selectOption, copyOption, pasteOption, cutOption, timeOption, infoOption;
+    private JMenuItem exportPdfOption, newOption, saveOption, openOption, printOption, exitOption, selectOption, copyOption, pasteOption, cutOption, timeOption, infoOption;
     private JFrame popUp;
-    private JTextArea textArea;
     private JPanel searchDropDownPanel;
     private JTextField searchInputField;
     private JButton searchGoButton;
@@ -74,12 +81,14 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
         newOption = new JMenuItem("New");
         openOption = new JMenuItem("Open");
         saveOption = new JMenuItem("Save As");
+        exportPdfOption = new JMenuItem("Export As PDF");
         printOption = new JMenuItem("Print");
         exitOption = new JMenuItem("Exit");
 
         fileOption.add(newOption);
         fileOption.add(openOption);
         fileOption.add(saveOption);
+        fileOption.add(exportPdfOption);
         fileOption.add(printOption);
         fileOption.add(exitOption);
 
@@ -106,6 +115,7 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
         newOption.addActionListener(this);
         saveOption.addActionListener(this);
         openOption.addActionListener(this);
+        exportPdfOption.addActionListener(this);
         printOption.addActionListener(this);
         exitOption.addActionListener(this);
 
@@ -277,6 +287,41 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
                     bWriter.close();
                 } catch (IOException e) {
                     e.printStackTrace();
+                }
+            }
+        }else if(source == exportPdfOption){
+            JFileChooser saveFileChooser = new JFileChooser("./");
+            int result = saveFileChooser.showSaveDialog(this);
+            if(result == JFileChooser.APPROVE_OPTION){
+                File newFile = saveFileChooser.getSelectedFile();
+                
+                // .pdf extension manager
+                if (FilenameUtils.getExtension(newFile.getName()).equalsIgnoreCase("pdf")) {
+                    // Leave file name how it is
+                } else {
+                     // If extension != pdf, then replace with .pdf. Or if there is no extension, add .pdf
+                    newFile = new File(newFile.getParentFile(), FilenameUtils.getBaseName(newFile.getName())+".pdf"); 
+                }
+
+
+                // create output stream to newfile based off whats typed or selected in saveDialog
+                OutputStream newsFileOutputStream = null;
+                try {
+                    newsFileOutputStream = new FileOutputStream(newFile);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                // Write what ever is in our textPane into pdf
+                Document newPdf = new Document();
+                try {
+                    PdfWriter writer = PdfWriter.getInstance(newPdf,  newsFileOutputStream);
+                    newPdf.open();
+                    newPdf.add(new Paragraph(textPane.getText()));
+                    newPdf.close();
+                    writer.close();
+                }catch (DocumentException e1){
+                    e1.printStackTrace();
                 }
             }
         }else if(source == printOption){
