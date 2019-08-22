@@ -54,15 +54,15 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
         searchOption = new JMenu("Search");
         aboutOption = new JMenu("About");
 
-	 // Create main menuBar and add options to it
-	menuBar = new JMenuBar();
+	    // Create main menuBar and add options to it
+	    menuBar = new JMenuBar();
         this.setJMenuBar(menuBar);
         menuBar.add(fileOption);
         menuBar.add(editOption);
         menuBar.add(aboutOption);
         menuBar.add(searchOption);
 	    
-	// Create search dropdown panel and add to menuBar search
+	    // Create search dropdown panel and add to menuBar search
         searchDropDownPanel = new JPanel();
         searchInputField = new JTextField(30);
         searchGoButton = new JButton("Go");
@@ -129,7 +129,7 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
         this.add(scrollPane);
         document = textPane.getStyledDocument();
         
-        //Init attributes/styles here
+        //Init attributes/styles here for text color
         blueText = new SimpleAttributeSet();
         StyleConstants.setForeground(blueText, Color.BLUE);
         orangeText = new SimpleAttributeSet();
@@ -308,6 +308,13 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
 
         }else if(source == cutOption){
             //Cut Button clicked
+            //Copy and Delete after...
+            String text  = textPane.getSelectedText();
+            textPane.setText(textPane.getText().replace(textPane.getSelectedText(),""));
+            Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+            StringSelection data = new StringSelection(text);
+            clip.setContents(data, null);
+
         }else if(source.equals(searchGoButton)){
             // Read what ever is in searchTextField into a string if Go is presse
             prevSearchQueryText = searchQueryText;
