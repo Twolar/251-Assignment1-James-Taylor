@@ -133,28 +133,14 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
 
     void insertWithColor(String str){
         String[] arrayOfKeywords = {"void", "public", "private"};
-        StringTokenizer strtok = new StringTokenizer(str);
-        try{
-            while(strtok.hasMoreTokens()){
-                String currentStr = strtok.nextToken();
-                boolean isKeyword = false;
-                for(int i = 0; i<arrayOfKeywords.length; i++){
-                    
-                    if(currentStr.equals(arrayOfKeywords[i])){
-                        isKeyword = true;
-                    }
-                }
-                if(isKeyword){
-                    document.insertString(document.getLength(), currentStr+" ", blueText);
-                }else{
-                    document.insertString(document.getLength(), currentStr+" ", null);
-                }
-                
-        
-            }
-            document.insertString(document.getLength(), "\n", null);
-        } catch (BadLocationException e) {
-            e.printStackTrace();
+        String keyword = "";
+        int pos = 0;
+        for(int x = 0; x<arrayOfKeywords.length; x++){
+            keyword = arrayOfKeywords[x];
+            for (int i = -1; (i = str.indexOf(keyword, i + 1)) != -1; i++) {
+                pos = ((document.getLength()-str.length())+i)-1;
+                document.setCharacterAttributes(pos, keyword.length()+1, blueText, false);
+            } 
         }
     }
 
@@ -205,7 +191,7 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
                     BufferedReader bReader = new BufferedReader(fReader);
                     String str = "";
                     while((str = bReader.readLine() ) != null){
-                        //document.insertString(document.getLength(), str+"\n", null);
+                        document.insertString(document.getLength(), str+"\n", null);
                         insertWithColor(str);
                     }
                     bReader.close();
@@ -214,6 +200,9 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
                     System.out.println("Error: File not found.");
                 } catch (IOException e) {
                     e.printStackTrace();
+                } catch( BadLocationException e){
+                    e.printStackTrace();
+
                 }
 
             }else{
