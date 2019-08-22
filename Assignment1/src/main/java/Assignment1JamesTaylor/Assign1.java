@@ -146,23 +146,57 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
         textPane.setText("");
     }
 
-    void insertWithColor(String str){
-        String[] arrayOfKeywords = {"void", "public", "private","int", "this", "true", "false"};
+    void changeKeywordColor(String str, String[] array, Color color, String notAllowed){
         String keyword = "";
-        String notAllowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12234567890";
         int pos = 0;
-        for(int x = 0; x<arrayOfKeywords.length; x++){
-            keyword = arrayOfKeywords[x];
-            for (int i = -1; (i = str.indexOf(keyword, i + 1)) != -1; i++) {
-                if((i <= 1)||((i+keyword.length()) >= document.getLength())){
+        SimpleAttributeSet attr = new SimpleAttributeSet();
+        StyleConstants.setForeground(attr, color);
+        for(int x = 0; x<array.length; x++){
+            keyword = array[x];
+            
+            for (int i = -1; (i = str.indexOf(keyword, i)) != -1; i++) {
+                if((i <= 1)||((i+keyword.length()) >= str.length())){
                     pos = ((document.getLength()-str.length())+i)-1;
-                    document.setCharacterAttributes(pos, keyword.length(), blueText, false);
+                    document.setCharacterAttributes(pos, keyword.length(), attr, false);
                 }else if(((notAllowed.indexOf(str.charAt(i-1))) == -1) && ((notAllowed.indexOf(str.charAt(i+keyword.length()))) == -1)){
                     pos = ((document.getLength()-str.length())+i)-1;
-                    document.setCharacterAttributes(pos, keyword.length(), blueText, false);
+                    document.setCharacterAttributes(pos, keyword.length(), attr, false);
                 }
             } 
         }
+
+    }
+    void setLineColour(String str, String[] array, Color color){
+        String keyword = "";
+        SimpleAttributeSet attr = new SimpleAttributeSet();
+        StyleConstants.setForeground(attr, color);
+        int i = -1;
+        int j = -1;
+        for(int x = 0; x<array.length; x++){
+            keyword = array[x];
+            if(str.indexOf(keyword, i) != -1){
+                document.setCharacterAttributes(document.getLength()-str.length()+i, str.length(), attr, false);
+            }
+        }
+    }
+
+    void insertWithColor(String str){
+        String[] blueKeywords = {"void", "public", "private","int", "this", "true", "false","float", "String",
+                                 "extends", "implements", "import", "package"};
+        String[] numbers = {"0", "1","2","3","4","5","6","7","8","9"};
+        String[] extra = {"while", "for", "new"};
+        String[] characters = {"(", ")", "{", "}", "[", "]"}; 
+        String[] fullLineChars = {"@", "//"};
+        String numAndLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\" ";
+        String letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\"";
+
+
+        changeKeywordColor(str, blueKeywords, new Color(0,0,139), numAndLetters);
+        changeKeywordColor(str, numbers, new Color(0,128,0), letters);
+        changeKeywordColor(str, extra, new Color(148,0,211), numAndLetters);
+        changeKeywordColor(str, characters, new Color(148,0,211), "\"");
+        setLineColour(str, fullLineChars, new Color(50,150,50));
+
     }
 
     public void actionPerformed(ActionEvent event) {
