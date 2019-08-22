@@ -20,12 +20,11 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import org.apache.commons.io.FilenameUtils;
-import org.fife.ui.rtextarea.*;
-import org.fife.ui.rsyntaxtextarea.*;
 
 import javax.swing.*;
 
 import java.awt.event.*;
+
 
 
 /**
@@ -328,7 +327,8 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
                 }
             }
         }else if(source == printOption){
-            //Print Button clicked
+        
+
         }else if(source == exitOption){
             //Exit Button clicked
             System.exit(0);
