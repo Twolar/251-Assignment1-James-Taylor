@@ -10,19 +10,24 @@ import java.time.format.DateTimeFormatter;
 import java.awt.Color;
 
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import javax.swing.text.Highlighter.HighlightPainter;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 
-import java.awt.print.*;
-import javax.print.PrintService;
+//import java.awt.print.*;
+//import javax.print.PrintService;
 
 import org.apache.commons.io.FilenameUtils;
+//import org.fife.ui.rtextarea.*;
+import org.fife.ui.rsyntaxtextarea.*;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -33,7 +38,7 @@ import java.awt.event.*;
  * Hello world!
  *
  */
-public class Assign1 extends JFrame implements ActionListener, KeyListener{
+public class Assign1 extends JFrame implements ActionListener{
     private JMenuBar menuBar; 
     private JMenu fileOption, editOption,  aboutOption, searchOption;
     private JMenuItem exportPdfOption, newOption, saveOption, openOption, printOption, exitOption, selectOption, copyOption, pasteOption, cutOption, timeOption, infoOption;
@@ -41,9 +46,9 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
     private JPanel searchDropDownPanel;
     private JTextField searchInputField;
     private JButton searchGoButton;
-    private  JTextPane textPane;
-    private String prevSearchQueryText;
+    private  RSyntaxTextArea  textArea;
     private String searchQueryText;
+    private int findPosition = -1;
     
     //Attributes
     private SimpleAttributeSet blueText;
@@ -143,17 +148,18 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
         infoOption.addActionListener(this);
 
         // Create and add the text area
-        textPane = new JTextPane();
-        textPane.addKeyListener(this);
-        JScrollPane scrollPane = new JScrollPane(textPane);
+        textArea = new RSyntaxTextArea();
+
+        JScrollPane scrollPane = new JScrollPane(textArea);
         this.add(scrollPane);
-        document = textPane.getStyledDocument();
+        //document = textArea.getStyledDocument();
         
         //Init attributes/styles here for text color
         blueText = new SimpleAttributeSet();
         StyleConstants.setForeground(blueText, Color.BLUE);
         orangeText = new SimpleAttributeSet();
         StyleConstants.setForeground(orangeText, Color.ORANGE);
+        
         highlightedText = new SimpleAttributeSet();
         StyleConstants.setBackground(highlightedText, Color.cyan);
         clearBackgroundColor = new SimpleAttributeSet();
@@ -163,69 +169,49 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
         this.setVisible(true);
     }
     void clearScreen(){
-        textPane.setText("");
+        textArea.setText("");
     }
+    
+    public String getFileType(String ex){
+        switch(ex){
+            case ".c":
+                return SyntaxConstants.SYNTAX_STYLE_C;
+            case ".cpp":
+                return SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS;
+            case ".py":
+                return SyntaxConstants.SYNTAX_STYLE_PYTHON;
+            case ".css":
+                return SyntaxConstants.SYNTAX_STYLE_CSS;
+            case ".csharp":
+                return SyntaxConstants.SYNTAX_STYLE_CSHARP;
+            case ".java":
+                return SyntaxConstants.SYNTAX_STYLE_JAVA;
+            case ".html":
+                return SyntaxConstants.SYNTAX_STYLE_HTML;
+            case ".xml":
+                return SyntaxConstants.SYNTAX_STYLE_XML;
+            case ".yml":
+                return SyntaxConstants.SYNTAX_STYLE_YAML;
+            case ".js":
+                return SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT;
+            case ".php":
+                return SyntaxConstants.SYNTAX_STYLE_PHP;
+            case ".json":
+                return SyntaxConstants.SYNTAX_STYLE_JSON;
+            case ".sql":
+                return SyntaxConstants.SYNTAX_STYLE_SQL;
+            case ".bat":
+                return SyntaxConstants.SYNTAX_STYLE_WINDOWS_BATCH;
+            default:
+                return SyntaxConstants.SYNTAX_STYLE_NONE;
 
-    void changeKeywordColor(String str, String[] array, Color color, String notAllowed){
-        String keyword = "";
-        int pos = 0;
-        SimpleAttributeSet attr = new SimpleAttributeSet();
-        StyleConstants.setForeground(attr, color);
-        for(int x = 0; x<array.length; x++){
-            keyword = array[x];
-            
-            for (int i = -1; (i = str.indexOf(keyword, i)) != -1; i++) {
-                if((i <= 1)||((i+keyword.length()) >= str.length())){
-                    pos = ((document.getLength()-str.length())+i)-1;
-                    document.setCharacterAttributes(pos, keyword.length(), attr, false);
-                }else if(((notAllowed.indexOf(str.charAt(i-1))) == -1) && ((notAllowed.indexOf(str.charAt(i+keyword.length()))) == -1)){
-                    pos = ((document.getLength()-str.length())+i)-1;
-                    document.setCharacterAttributes(pos, keyword.length(), attr, false);
-                }
-            } 
         }
-
-    }
-    void setLineColour(String str, String[] array, Color color){
-        String keyword = "";
-        SimpleAttributeSet attr = new SimpleAttributeSet();
-        StyleConstants.setForeground(attr, color);
-        int i = -1;
-        int j = -1;
-        for(int x = 0; x<array.length; x++){
-            keyword = array[x];
-            if(str.indexOf(keyword, i) != -1){
-                document.setCharacterAttributes(document.getLength()-str.length()+i, str.length(), attr, false);
-            }
-        }
-    }
-
-    void insertWithColor(String str){
-        String[] blueKeywords = {"void", "public", "private","int", "this", "true", "false","float", "String",
-                                 "extends", "implements", "import", "package"};
-        String[] numbers = {"0", "1","2","3","4","5","6","7","8","9"};
-        String[] extra = {"while", "for", "new"};
-        String[] characters = {"(", ")", "{", "}", "[", "]"}; 
-        String[] fullLineChars = {"@", "//"};
-        String numAndLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\" ";
-        String letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\"";
-
-
-        changeKeywordColor(str, blueKeywords, new Color(0,0,139), numAndLetters);
-        changeKeywordColor(str, numbers, new Color(0,128,0), letters);
-        changeKeywordColor(str, extra, new Color(148,0,211), numAndLetters);
-        changeKeywordColor(str, characters, new Color(148,0,211), "\"");
-        setLineColour(str, fullLineChars, new Color(50,150,50));
-
     }
 
     public void actionPerformed(ActionEvent event) {
         // Get event
         JComponent source = (JComponent) event.getSource();
         // If user clicks Date & Time option
-
-
-
         if(source == timeOption){
             // Grab the current Date & Time, then format it into a string
             LocalDateTime nowDateTime = LocalDateTime.now();
@@ -255,7 +241,6 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
             new Assign1(true);
         }else if(source == openOption){
             //Open Button clicked
-
             clearScreen();
             JFileChooser openFileChooser = new JFileChooser("./");
             int result = openFileChooser.showOpenDialog(this);
@@ -265,9 +250,13 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
                     FileReader fReader = new FileReader(selectedFile);
                     BufferedReader bReader = new BufferedReader(fReader);
                     String str = "";
+                    String extension = "";
+                    int index = -1;
+                    index = selectedFile.getName().indexOf(".");
+                    extension =  selectedFile.getName().substring(index);
+                    textArea.setSyntaxEditingStyle(getFileType(extension));
                     while((str = bReader.readLine() ) != null){
-                        document.insertString(document.getLength(), str+"\n", null);
-                        //insertWithColor(str);
+                        textArea.append(str+"\n");
                     }
                     bReader.close();
                 
@@ -275,9 +264,6 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
                     System.out.println("Error: File not found.");
                 } catch (IOException e) {
                     e.printStackTrace();
-                } catch( BadLocationException e){
-                    e.printStackTrace();
-
                 }
 
             }else{
@@ -292,7 +278,7 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
                 try{
                     FileWriter fWriter = new FileWriter(newFile);
                     BufferedWriter bWriter = new BufferedWriter(fWriter);
-                    String fileContents = textPane.getText().replaceAll("\n", System.lineSeparator());
+                    String fileContents = textArea.getText().replaceAll("\n", System.lineSeparator());
                     bWriter.write(fileContents, 0, fileContents.length());
                     bWriter.close();
                 } catch (IOException e) {
@@ -327,7 +313,7 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
                 try {
                     PdfWriter writer = PdfWriter.getInstance(newPdf,  newsFileOutputStream);
                     newPdf.open();
-                    newPdf.add(new Paragraph(textPane.getText()));
+                    newPdf.add(new Paragraph(textArea.getText()));
                     newPdf.close();
                     writer.close();
                     JOptionPane.showMessageDialog(null, "Document successfully converted and exported as PDF.");
@@ -338,7 +324,7 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
             }
         }else if(source == printOption){
             try {
-                boolean printDone = textPane.print();
+                boolean printDone = textArea.print();
                 if (printDone) {
                     JOptionPane.showMessageDialog(null, "Printing is done");
                 } else {
@@ -354,13 +340,13 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
             System.exit(0);
         }else if(source == selectOption){
             //Select Button clicked
-            textPane.selectAll();
+            textArea.selectAll();
             //StyleConstants.setForeground(blueText, Color.BLUE);
             document.setCharacterAttributes(0, document.getLength(), blueText, true);
             
         }else if(source == copyOption){
             //Copy Button clicked
-            String text  = textPane.getSelectedText();
+            String text  = textArea.getSelectedText();
             Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
             StringSelection data = new StringSelection(text);
             clip.setContents(data, null);
@@ -377,30 +363,30 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
         }else if(source == cutOption){
             //Cut Button clicked
             //Copy and Delete after...
-            String text  = textPane.getSelectedText();
-            textPane.setText(textPane.getText().replace(textPane.getSelectedText(),""));
+            String text  = textArea.getSelectedText();
+            textArea.setText(textArea.getText().replace(textArea.getSelectedText(),""));
             Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
             StringSelection data = new StringSelection(text);
             clip.setContents(data, null);
 
         }else if(source.equals(searchGoButton)){
             // Read what ever is in searchTextField into a string if Go is presse
-            prevSearchQueryText = searchQueryText;
-            if(prevSearchQueryText != null){
-                document.setCharacterAttributes(0, document.getLength(), clearBackgroundColor, false);
-            }
             searchQueryText = searchInputField.getText();
-
-             
-            System.out.println("Search Query: " + searchQueryText); // DEBUG
-            try {
-                for (int i = -1; (i = document.getText(0, document.getLength()).indexOf(searchQueryText,i + 1)) != -1; i++) {
-
-                    document.setCharacterAttributes(i, searchQueryText.length(), highlightedText, false);
+            findPosition = textArea.getText().indexOf(searchQueryText, findPosition + 1);
+            System.out.println("findPosition  = "+findPosition);
+            if(searchQueryText != null){
+                if(findPosition > -1){
+                    textArea.setSelectionStart(findPosition);
+                    textArea.setSelectionEnd(findPosition+ searchQueryText.length());
+                }else{
+                    findPosition = textArea.getText().indexOf(searchQueryText, findPosition + 1);
+                    textArea.setSelectionStart(findPosition);
+                    textArea.setSelectionEnd(findPosition+ searchQueryText.length());
                 }
-            } catch (BadLocationException e) {
-                e.printStackTrace();
+
             }
+            //arrayOfPositons = new int[textArea.getLineCount()+1];
+            System.out.println("Search Query: " + searchQueryText); // DEBUG
 
         }
     }
@@ -408,30 +394,6 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
     {
         System.out.println( "Starting App..." );
         new Assign1(false);
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-        
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        /*
-        System.out.print(e.getKeyChar());
-        if((e.getKeyChar() == '(')||(e.getKeyChar() == ')')){
-            //set ( and ) to orange
-            changeCharacterColor(orangeText);  
-        }else{
-            changeCharacterColor(blueText);
-        }
-        */
-        
     }
 
     public void changeCharacterColor(SimpleAttributeSet attr){
