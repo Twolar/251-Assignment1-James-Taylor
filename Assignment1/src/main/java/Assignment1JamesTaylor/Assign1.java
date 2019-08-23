@@ -52,10 +52,16 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
     private SimpleAttributeSet clearBackgroundColor;
     private StyledDocument document;
     
-    public Assign1(){
+    public Assign1(boolean isWindow){
         // create the frame
         super("[Scribe]");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Exiting original window terminates program, exiting any new Windows only terminates those window instances.
+        if(isWindow) {
+            this.dispose();
+        } else {
+            this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        }
         this.setSize(800, 600);
         this.setLocationRelativeTo(null);
 
@@ -246,7 +252,7 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
             popUp.setVisible(true);
         }else if(source == newOption){
             //New Button clicked
-            new Assign1();
+            new Assign1(true);
         }else if(source == openOption){
             //Open Button clicked
 
@@ -401,7 +407,7 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
     public static void main( String[] args )
     {
         System.out.println( "Starting App..." );
-        new Assign1();
+        new Assign1(false);
     }
 
     @Override
