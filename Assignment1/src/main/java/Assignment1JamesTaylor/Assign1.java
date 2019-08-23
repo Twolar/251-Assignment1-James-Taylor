@@ -9,13 +9,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.awt.Color;
 
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.Highlighter;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-import javax.swing.text.Highlighter.HighlightPainter;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -275,6 +271,11 @@ public class Assign1 extends JFrame implements ActionListener{
             int result = saveFileChooser.showSaveDialog(this);
             if(result == JFileChooser.APPROVE_OPTION){
                 File newFile = saveFileChooser.getSelectedFile();
+                String extension = "";
+                int index = -1;
+                index = newFile.getName().indexOf(".");
+                extension =  newFile.getName().substring(index);
+                textArea.setSyntaxEditingStyle(getFileType(extension));
                 try{
                     FileWriter fWriter = new FileWriter(newFile);
                     BufferedWriter bWriter = new BufferedWriter(fWriter);
@@ -340,10 +341,7 @@ public class Assign1 extends JFrame implements ActionListener{
             System.exit(0);
         }else if(source == selectOption){
             //Select Button clicked
-            textArea.selectAll();
-            //StyleConstants.setForeground(blueText, Color.BLUE);
-            document.setCharacterAttributes(0, document.getLength(), blueText, true);
-            
+            textArea.selectAll();            
         }else if(source == copyOption){
             //Copy Button clicked
             String text  = textArea.getSelectedText();
@@ -373,7 +371,6 @@ public class Assign1 extends JFrame implements ActionListener{
             // Read what ever is in searchTextField into a string if Go is presse
             searchQueryText = searchInputField.getText();
             findPosition = textArea.getText().indexOf(searchQueryText, findPosition + 1);
-            System.out.println("findPosition  = "+findPosition);
             if(searchQueryText != null){
                 if(findPosition > -1){
                     textArea.setSelectionStart(findPosition);
@@ -385,8 +382,7 @@ public class Assign1 extends JFrame implements ActionListener{
                 }
 
             }
-            //arrayOfPositons = new int[textArea.getLineCount()+1];
-            System.out.println("Search Query: " + searchQueryText); // DEBUG
+            //System.out.println("Search Query: " + searchQueryText); // DEBUG
 
         }
     }
