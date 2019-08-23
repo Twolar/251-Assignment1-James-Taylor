@@ -19,10 +19,12 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 
+import java.awt.print.*;
+import javax.print.PrintService;
+
 import org.apache.commons.io.FilenameUtils;
 
 import javax.swing.*;
-
 import java.awt.event.*;
 
 
@@ -322,12 +324,24 @@ public class Assign1 extends JFrame implements ActionListener, KeyListener{
                     newPdf.add(new Paragraph(textPane.getText()));
                     newPdf.close();
                     writer.close();
+                    JOptionPane.showMessageDialog(null, "Document successfully converted and exported as PDF.");
                 }catch (DocumentException e1){
+                    JOptionPane.showMessageDialog(null, "Error in PDF conversion & export.");
                     e1.printStackTrace();
                 }
             }
         }else if(source == printOption){
-        
+            try {
+                boolean printDone = textPane.print();
+                if (printDone) {
+                    JOptionPane.showMessageDialog(null, "Printing is done");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Error while printing");
+                }
+            } catch (Exception e2) {
+                JOptionPane.showMessageDialog(null, "Error while printing");
+                e2.printStackTrace();
+            }
 
         }else if(source == exitOption){
             //Exit Button clicked
