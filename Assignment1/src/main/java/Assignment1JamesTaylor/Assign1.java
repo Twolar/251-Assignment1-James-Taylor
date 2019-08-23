@@ -7,11 +7,6 @@ import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.awt.Color;
-
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -41,17 +36,10 @@ public class Assign1 extends JFrame implements ActionListener{
     private JFrame popUp;
     private JPanel searchDropDownPanel;
     private JTextField searchInputField;
-    private JButton searchGoButton;
+    private JButton searchButton;
     private  RSyntaxTextArea  textArea;
     private String searchQueryText;
     private int findPosition = -1;
-    
-    //Attributes
-    private SimpleAttributeSet blueText;
-    private SimpleAttributeSet orangeText;
-    private SimpleAttributeSet highlightedText;
-    private SimpleAttributeSet clearBackgroundColor;
-    private StyledDocument document;
     
     public Assign1(boolean isWindow){
         // create the frame
@@ -83,9 +71,9 @@ public class Assign1 extends JFrame implements ActionListener{
 	    // Create search dropdown panel and add to menuBar search
         searchDropDownPanel = new JPanel();
         searchInputField = new JTextField(30);
-        searchGoButton = new JButton("Go");
+        searchButton = new JButton("Find");
         searchDropDownPanel.add(searchInputField);
-        searchDropDownPanel.add(searchGoButton);
+        searchDropDownPanel.add(searchButton);
         searchOption.add(searchDropDownPanel);
         
         // this create the sub menu for the option "File" in the main menu bar
@@ -119,7 +107,6 @@ public class Assign1 extends JFrame implements ActionListener{
         aboutOption.add(timeOption);
         aboutOption.add(infoOption);
 
-
         //Action listners
 
         //File
@@ -137,7 +124,7 @@ public class Assign1 extends JFrame implements ActionListener{
         cutOption.addActionListener(this);
 
         //Search
-        searchGoButton.addActionListener(this);
+        searchButton.addActionListener(this);
 
         //About
         timeOption.addActionListener(this);
@@ -148,19 +135,6 @@ public class Assign1 extends JFrame implements ActionListener{
 
         JScrollPane scrollPane = new JScrollPane(textArea);
         this.add(scrollPane);
-        //document = textArea.getStyledDocument();
-        
-        //Init attributes/styles here for text color
-        blueText = new SimpleAttributeSet();
-        StyleConstants.setForeground(blueText, Color.BLUE);
-        orangeText = new SimpleAttributeSet();
-        StyleConstants.setForeground(orangeText, Color.ORANGE);
-        
-        highlightedText = new SimpleAttributeSet();
-        StyleConstants.setBackground(highlightedText, Color.cyan);
-        clearBackgroundColor = new SimpleAttributeSet();
-        StyleConstants.setBackground(clearBackgroundColor, new Color(0, 0, 0, 0));
-
         // Make the window/frame visible.
         this.setVisible(true);
     }
@@ -200,10 +174,8 @@ public class Assign1 extends JFrame implements ActionListener{
                 return SyntaxConstants.SYNTAX_STYLE_WINDOWS_BATCH;
             default:
                 return SyntaxConstants.SYNTAX_STYLE_NONE;
-
         }
     }
-
     public void actionPerformed(ActionEvent event) {
         // Get event
         JComponent source = (JComponent) event.getSource();
@@ -222,15 +194,12 @@ public class Assign1 extends JFrame implements ActionListener{
             popUp.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             popUp.setSize(400, 200);
             popUp.setLocationRelativeTo(null);
-            
             // Pop Up Text
             JLabel popUpText;
             popUpText = new JLabel("Welcome to the Scribe Text Editor, built by Taylor & James");
-            
             JPanel popUpPanel = new JPanel();
             popUpPanel.add(popUpText);
             popUp.add(popUpPanel);
-
             popUp.setVisible(true);
         }else if(source == newOption){
             //New Button clicked
@@ -291,7 +260,6 @@ public class Assign1 extends JFrame implements ActionListener{
             int result = saveFileChooser.showSaveDialog(this);
             if(result == JFileChooser.APPROVE_OPTION){
                 File newFile = saveFileChooser.getSelectedFile();
-                
                 // .pdf extension manager
                 if (FilenameUtils.getExtension(newFile.getName()).equalsIgnoreCase("pdf")) {
                     // Leave file name how it is
@@ -299,8 +267,6 @@ public class Assign1 extends JFrame implements ActionListener{
                      // If extension != pdf, then replace with .pdf. Or if there is no extension, add .pdf
                     newFile = new File(newFile.getParentFile(), FilenameUtils.getBaseName(newFile.getName())+".pdf"); 
                 }
-
-
                 // create output stream to newfile based off whats typed or selected as the save file name in saveDialog
                 OutputStream newsFileOutputStream = null;
                 try {
@@ -308,7 +274,6 @@ public class Assign1 extends JFrame implements ActionListener{
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
-
                 // Write what ever is in our textPane into pdf
                 Document newPdf = new Document();
                 try {
@@ -335,7 +300,6 @@ public class Assign1 extends JFrame implements ActionListener{
                 JOptionPane.showMessageDialog(null, "Error while printing");
                 e2.printStackTrace();
             }
-
         }else if(source == exitOption){
             //Exit Button clicked
             System.exit(0);
@@ -353,11 +317,10 @@ public class Assign1 extends JFrame implements ActionListener{
             //Paste Button clicked
             try {
                 String text = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
-                document.insertString(document.getLength(), text, null);
+                textArea.insert(text, textArea.getCaretPosition());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }else if(source == cutOption){
             //Cut Button clicked
             //Copy and Delete after...
@@ -366,8 +329,7 @@ public class Assign1 extends JFrame implements ActionListener{
             Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
             StringSelection data = new StringSelection(text);
             clip.setContents(data, null);
-
-        }else if(source.equals(searchGoButton)){
+        }else if(source.equals(searchButton)){
             // Read what ever is in searchTextField into a string if Go is presse
             searchQueryText = searchInputField.getText();
             findPosition = textArea.getText().indexOf(searchQueryText, findPosition + 1);
@@ -380,7 +342,6 @@ public class Assign1 extends JFrame implements ActionListener{
                     textArea.setSelectionStart(findPosition);
                     textArea.setSelectionEnd(findPosition+ searchQueryText.length());
                 }
-
             }
             //System.out.println("Search Query: " + searchQueryText); // DEBUG
 
@@ -390,12 +351,5 @@ public class Assign1 extends JFrame implements ActionListener{
     {
         System.out.println( "Starting App..." );
         new Assign1(false);
-    }
-
-    public void changeCharacterColor(SimpleAttributeSet attr){
-        document.setCharacterAttributes(document.getLength()-1, 1, attr, false); 
-
-    }
-
-    
+    }   
 }
