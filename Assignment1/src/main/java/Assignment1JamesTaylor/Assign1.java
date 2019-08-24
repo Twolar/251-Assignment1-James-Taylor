@@ -176,130 +176,160 @@ public class Assign1 extends JFrame implements ActionListener{
                 return SyntaxConstants.SYNTAX_STYLE_NONE;
         }
     }
+
+    public void saveFile(){
+        JFileChooser saveFileChooser = new JFileChooser("./");
+        int result = saveFileChooser.showSaveDialog(this);
+        if(result == JFileChooser.APPROVE_OPTION){
+            File newFile = saveFileChooser.getSelectedFile();
+            String extension = "";
+            int index = -1;
+            index = newFile.getName().indexOf(".");
+            extension =  newFile.getName().substring(index);
+            textArea.setSyntaxEditingStyle(getFileType(extension));
+            try{
+                FileWriter fWriter = new FileWriter(newFile);
+                BufferedWriter bWriter = new BufferedWriter(fWriter);
+                String fileContents = textArea.getText().replaceAll("\n", System.lineSeparator());
+                bWriter.write(fileContents, 0, fileContents.length());
+                bWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public String openFile(){
+        clearScreen();
+        JFileChooser openFileChooser = new JFileChooser("./");
+        int result = openFileChooser.showOpenDialog(this);
+
+        if(result == JFileChooser.APPROVE_OPTION){
+            File selectedFile = openFileChooser.getSelectedFile();
+            try{
+                FileReader fReader = new FileReader(selectedFile);
+                BufferedReader bReader = new BufferedReader(fReader);
+                String str = "";
+                String extension = "";
+                int index = -1;
+                index = selectedFile.getName().indexOf(".");
+                extension =  selectedFile.getName().substring(index);
+                textArea.setSyntaxEditingStyle(getFileType(extension));
+                while((str = bReader.readLine() ) != null){
+                    textArea.append(str+"\n");
+                }
+                bReader.close();
+            
+            }catch(FileNotFoundException e){
+                System.out.println("Error: File not found.");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return selectedFile.toString();
+        }else{
+            System.out.println("Error: Could not open file.");
+            return null;
+        }
+    }
+    public void searchInFile(String input){
+        findPosition = textArea.getText().indexOf(input, findPosition + 1);
+        if(input != null){
+            if(findPosition > -1){
+                textArea.setSelectionStart(findPosition);
+                textArea.setSelectionEnd(findPosition+ input.length());
+            }else{
+                findPosition = textArea.getText().indexOf(input, findPosition + 1);
+                textArea.setSelectionStart(findPosition);
+                textArea.setSelectionEnd(findPosition+ input.length());
+            }
+        }
+    }
+
+    public void exportToPdf(){
+        JFileChooser saveFileChooser = new JFileChooser("./");
+        int result = saveFileChooser.showSaveDialog(this);
+        if(result == JFileChooser.APPROVE_OPTION){
+            File newFile = saveFileChooser.getSelectedFile();
+            // .pdf extension manager
+            if (FilenameUtils.getExtension(newFile.getName()).equalsIgnoreCase("pdf")) {
+                // Leave file name how it is
+            } else {
+                    // If extension != pdf, then replace with .pdf. Or if there is no extension, add .pdf
+                newFile = new File(newFile.getParentFile(), FilenameUtils.getBaseName(newFile.getName())+".pdf"); 
+            }
+            // create output stream to newfile based off whats typed or selected as the save file name in saveDialog
+            OutputStream newsFileOutputStream = null;
+            try {
+                newsFileOutputStream = new FileOutputStream(newFile);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            // Write what ever is in our textPane into pdf
+            Document newPdf = new Document();
+            try {
+                PdfWriter writer = PdfWriter.getInstance(newPdf,  newsFileOutputStream);
+                newPdf.open();
+                newPdf.add(new Paragraph(textArea.getText()));
+                newPdf.close();
+                writer.close();
+                JOptionPane.showMessageDialog(null, "Document successfully converted and exported as PDF.");
+            }catch (DocumentException e1){
+                JOptionPane.showMessageDialog(null, "Error in PDF conversion & export.");
+                e1.printStackTrace();
+            }
+        }
+    }
+
+    public void printFile(){
+        try {
+            boolean printDone = textArea.print();
+            if (printDone) {
+                JOptionPane.showMessageDialog(null, "Printing is done");
+            } else {
+                JOptionPane.showMessageDialog(null, "Error while printing");
+            }
+        } catch (Exception e2) {
+            JOptionPane.showMessageDialog(null, "Error while printing");
+            e2.printStackTrace();
+        }
+    }
+
+    public void displayInfo(){
+        // Create new JFrame for Popup
+        popUp = new JFrame("Info");
+        popUp.setTitle("Info");
+        popUp.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        popUp.setSize(400, 200);
+        popUp.setLocationRelativeTo(null);
+        // Pop Up Text
+        JLabel label1;
+        String infoText = "<html><h1>Welcome to Scribe Text Editor!</h1><h2>Built by James & Taylor</h2>For Assignment 1<br/>159.251</html>";
+        label1 = new JLabel(infoText, SwingConstants.CENTER);
+        JPanel popUpPanel = new JPanel();
+        popUpPanel.add(label1);
+        popUp.add(popUpPanel);
+        popUp.setVisible(true);
+    }
+
     public void actionPerformed(ActionEvent event) {
-        // Get event
-        JComponent source = (JComponent) event.getSource();
-        // If user clicks Date & Time option
+        JComponent source = (JComponent) event.getSource(); //get the source
         if(source == timeOption){
-            // Grab the current Date & Time, then format it into a string
             LocalDateTime nowDateTime = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
             String formattedDateTime = nowDateTime.format(formatter);
-            // Changes the title of the window to include the Time & Date
-            this.setTitle("[Scribe] Date: " + formattedDateTime);
+            this.setTitle("[Scribe] Current Date: " + formattedDateTime);
         }else if(source == infoOption){ // If user clicks Info option
-            // Create new JFrame for Popup
-            popUp = new JFrame("Info");
-            popUp.setTitle("Info");
-            popUp.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            popUp.setSize(400, 200);
-            popUp.setLocationRelativeTo(null);
-            // Pop Up Text
-            JLabel popUpText;
-            popUpText = new JLabel("Welcome to the Scribe Text Editor, built by Taylor & James");
-            JPanel popUpPanel = new JPanel();
-            popUpPanel.add(popUpText);
-            popUp.add(popUpPanel);
-            popUp.setVisible(true);
+            displayInfo();
         }else if(source == newOption){
-            //New Button clicked
             new Assign1(true);
         }else if(source == openOption){
-            //Open Button clicked
-            clearScreen();
-            JFileChooser openFileChooser = new JFileChooser("./");
-            int result = openFileChooser.showOpenDialog(this);
-            if(result == JFileChooser.APPROVE_OPTION){
-                File selectedFile = openFileChooser.getSelectedFile();
-                try{
-                    FileReader fReader = new FileReader(selectedFile);
-                    BufferedReader bReader = new BufferedReader(fReader);
-                    String str = "";
-                    String extension = "";
-                    int index = -1;
-                    index = selectedFile.getName().indexOf(".");
-                    extension =  selectedFile.getName().substring(index);
-                    textArea.setSyntaxEditingStyle(getFileType(extension));
-                    while((str = bReader.readLine() ) != null){
-                        textArea.append(str+"\n");
-                    }
-                    bReader.close();
-                
-                }catch(FileNotFoundException e){
-                    System.out.println("Error: File not found.");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }else{
-                System.out.println("Error: Could not open file.");
-            }
+            openFile();  
         }else if(source == saveOption){
-            //Save Button clicked
-            JFileChooser saveFileChooser = new JFileChooser("./");
-            int result = saveFileChooser.showSaveDialog(this);
-            if(result == JFileChooser.APPROVE_OPTION){
-                File newFile = saveFileChooser.getSelectedFile();
-                String extension = "";
-                int index = -1;
-                index = newFile.getName().indexOf(".");
-                extension =  newFile.getName().substring(index);
-                textArea.setSyntaxEditingStyle(getFileType(extension));
-                try{
-                    FileWriter fWriter = new FileWriter(newFile);
-                    BufferedWriter bWriter = new BufferedWriter(fWriter);
-                    String fileContents = textArea.getText().replaceAll("\n", System.lineSeparator());
-                    bWriter.write(fileContents, 0, fileContents.length());
-                    bWriter.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            saveFile();
         }else if(source == exportPdfOption){
-            JFileChooser saveFileChooser = new JFileChooser("./");
-            int result = saveFileChooser.showSaveDialog(this);
-            if(result == JFileChooser.APPROVE_OPTION){
-                File newFile = saveFileChooser.getSelectedFile();
-                // .pdf extension manager
-                if (FilenameUtils.getExtension(newFile.getName()).equalsIgnoreCase("pdf")) {
-                    // Leave file name how it is
-                } else {
-                     // If extension != pdf, then replace with .pdf. Or if there is no extension, add .pdf
-                    newFile = new File(newFile.getParentFile(), FilenameUtils.getBaseName(newFile.getName())+".pdf"); 
-                }
-                // create output stream to newfile based off whats typed or selected as the save file name in saveDialog
-                OutputStream newsFileOutputStream = null;
-                try {
-                    newsFileOutputStream = new FileOutputStream(newFile);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                // Write what ever is in our textPane into pdf
-                Document newPdf = new Document();
-                try {
-                    PdfWriter writer = PdfWriter.getInstance(newPdf,  newsFileOutputStream);
-                    newPdf.open();
-                    newPdf.add(new Paragraph(textArea.getText()));
-                    newPdf.close();
-                    writer.close();
-                    JOptionPane.showMessageDialog(null, "Document successfully converted and exported as PDF.");
-                }catch (DocumentException e1){
-                    JOptionPane.showMessageDialog(null, "Error in PDF conversion & export.");
-                    e1.printStackTrace();
-                }
-            }
+            exportToPdf();
         }else if(source == printOption){
-            try {
-                boolean printDone = textArea.print();
-                if (printDone) {
-                    JOptionPane.showMessageDialog(null, "Printing is done");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Error while printing");
-                }
-            } catch (Exception e2) {
-                JOptionPane.showMessageDialog(null, "Error while printing");
-                e2.printStackTrace();
-            }
+            printFile();
         }else if(source == exitOption){
             //Exit Button clicked
             System.exit(0);
@@ -312,7 +342,6 @@ public class Assign1 extends JFrame implements ActionListener{
             Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
             StringSelection data = new StringSelection(text);
             clip.setContents(data, null);
-
         }else if(source == pasteOption){
             //Paste Button clicked
             try {
@@ -322,29 +351,14 @@ public class Assign1 extends JFrame implements ActionListener{
                 e.printStackTrace();
             }
         }else if(source == cutOption){
-            //Cut Button clicked
-            //Copy and Delete after...
             String text  = textArea.getSelectedText();
             textArea.setText(textArea.getText().replace(textArea.getSelectedText(),""));
             Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
             StringSelection data = new StringSelection(text);
             clip.setContents(data, null);
         }else if(source.equals(searchButton)){
-            // Read what ever is in searchTextField into a string if Go is presse
             searchQueryText = searchInputField.getText();
-            findPosition = textArea.getText().indexOf(searchQueryText, findPosition + 1);
-            if(searchQueryText != null){
-                if(findPosition > -1){
-                    textArea.setSelectionStart(findPosition);
-                    textArea.setSelectionEnd(findPosition+ searchQueryText.length());
-                }else{
-                    findPosition = textArea.getText().indexOf(searchQueryText, findPosition + 1);
-                    textArea.setSelectionStart(findPosition);
-                    textArea.setSelectionEnd(findPosition+ searchQueryText.length());
-                }
-            }
-            //System.out.println("Search Query: " + searchQueryText); // DEBUG
-
+            searchInFile(searchQueryText);
         }
     }
     public static void main( String[] args )
