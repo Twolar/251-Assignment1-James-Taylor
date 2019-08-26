@@ -172,39 +172,35 @@ public class Assign1 extends JFrame implements ActionListener{
                 return SyntaxConstants.SYNTAX_STYLE_SQL;
             case ".bat":
                 return SyntaxConstants.SYNTAX_STYLE_WINDOWS_BATCH;
+            case ".odt":
+                //do something here
             default:
                 return SyntaxConstants.SYNTAX_STYLE_NONE;
         }
     }
 
-    public void saveFile(){
-        JFileChooser saveFileChooser = new JFileChooser("./");
-        int result = saveFileChooser.showSaveDialog(this);
-        if(result == JFileChooser.APPROVE_OPTION){
-            File newFile = saveFileChooser.getSelectedFile();
-            String extension = "";
-            int index = -1;
-            index = newFile.getName().indexOf(".");
-            extension =  newFile.getName().substring(index);
-            textArea.setSyntaxEditingStyle(getFileType(extension));
-            try{
-                FileWriter fWriter = new FileWriter(newFile);
-                BufferedWriter bWriter = new BufferedWriter(fWriter);
-                String fileContents = textArea.getText().replaceAll("\n", System.lineSeparator());
-                bWriter.write(fileContents, 0, fileContents.length());
-                bWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    public void saveFile(File file){
+        String extension = "";
+        int index = -1;
+        index = file.getName().indexOf(".");
+        extension =  file.getName().substring(index);
+        textArea.setSyntaxEditingStyle(getFileType(extension));
+        try{
+            FileWriter fWriter = new FileWriter(file);
+            BufferedWriter bWriter = new BufferedWriter(fWriter);
+            String fileContents = textArea.getText().replaceAll("\n", System.lineSeparator());
+            bWriter.write(fileContents, 0, fileContents.length());
+            bWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     public String openFile(){
-        clearScreen();
         JFileChooser openFileChooser = new JFileChooser("./");
         int result = openFileChooser.showOpenDialog(this);
-
         if(result == JFileChooser.APPROVE_OPTION){
+            clearScreen();
             File selectedFile = openFileChooser.getSelectedFile();
             try{
                 FileReader fReader = new FileReader(selectedFile);
@@ -325,7 +321,12 @@ public class Assign1 extends JFrame implements ActionListener{
         }else if(source == openOption){
             openFile();  
         }else if(source == saveOption){
-            saveFile();
+            JFileChooser saveFileChooser = new JFileChooser("./");
+            int result = saveFileChooser.showSaveDialog(this);
+            if(result == JFileChooser.APPROVE_OPTION){
+                File newFile = saveFileChooser.getSelectedFile();
+                saveFile(newFile);
+            }
         }else if(source == exportPdfOption){
             exportToPdf();
         }else if(source == printOption){
