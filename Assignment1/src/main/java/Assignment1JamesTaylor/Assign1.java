@@ -30,7 +30,8 @@ import java.awt.event.*;
  *
  */
 public class Assign1 extends JFrame implements ActionListener{
-    private JMenuBar menuBar; 
+    private static final long serialVersionUID = 1L;
+    private JMenuBar menuBar;
     private JMenu fileOption, editOption,  aboutOption, searchOption;
     private JMenuItem exportPdfOption, newOption, saveOption, openOption, printOption, exitOption, selectOption, copyOption, pasteOption, cutOption, timeOption, infoOption;
     private JFrame popUp;
@@ -196,38 +197,30 @@ public class Assign1 extends JFrame implements ActionListener{
         }
     }
 
-    public String openFile(){
-        JFileChooser openFileChooser = new JFileChooser("./");
-        int result = openFileChooser.showOpenDialog(this);
-        if(result == JFileChooser.APPROVE_OPTION){
-            clearScreen();
-            File selectedFile = openFileChooser.getSelectedFile();
-            try{
-                FileReader fReader = new FileReader(selectedFile);
-                BufferedReader bReader = new BufferedReader(fReader);
-                String str = "";
-                String extension = "";
-                int index = -1;
-                index = selectedFile.getName().indexOf(".");
-                extension =  selectedFile.getName().substring(index);
-                textArea.setSyntaxEditingStyle(getFileType(extension));
-                while((str = bReader.readLine() ) != null){
-                    textArea.append(str+"\n");
-                }
-                bReader.close();
-            
-            }catch(FileNotFoundException e){
-                System.out.println("Error: File not found.");
-            } catch (IOException e) {
-                e.printStackTrace();
+    public boolean openFile(File file){
+        try{
+            FileReader fReader = new FileReader(file);
+            BufferedReader bReader = new BufferedReader(fReader);
+            String str = "";
+            String extension = "";
+            int index = -1;
+            index = file.getName().indexOf(".");
+            extension =  file.getName().substring(index);
+            textArea.setSyntaxEditingStyle(getFileType(extension));
+            while((str = bReader.readLine() ) != null){
+                textArea.append(str+"\n");
             }
-            return selectedFile.toString();
-        }else{
-            System.out.println("Error: Could not open file.");
-            return null;
+            bReader.close();
+        }catch(FileNotFoundException e){
+            System.out.println("Error: File not found.");
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
+        return true;
     }
-    public void searchInFile(String input){
+    public int searchInFile(String input){
         findPosition = textArea.getText().indexOf(input, findPosition + 1);
         if(input != null){
             if(findPosition > -1){
@@ -239,6 +232,7 @@ public class Assign1 extends JFrame implements ActionListener{
                 textArea.setSelectionEnd(findPosition+ input.length());
             }
         }
+        return findPosition;
     }
 
     public void exportToPdf(){
@@ -319,7 +313,15 @@ public class Assign1 extends JFrame implements ActionListener{
         }else if(source == newOption){
             new Assign1(true);
         }else if(source == openOption){
-            openFile();  
+            JFileChooser openFileChooser = new JFileChooser("./");
+            int result = openFileChooser.showOpenDialog(this);
+            if(result == JFileChooser.APPROVE_OPTION){
+                clearScreen();
+                File selectedFile = openFileChooser.getSelectedFile();
+                openFile(selectedFile);
+            }else{
+                System.out.println("Error: Could not open file.");
+            }  
         }else if(source == saveOption){
             JFileChooser saveFileChooser = new JFileChooser("./");
             int result = saveFileChooser.showSaveDialog(this);
@@ -359,7 +361,7 @@ public class Assign1 extends JFrame implements ActionListener{
             clip.setContents(data, null);
         }else if(source.equals(searchButton)){
             searchQueryText = searchInputField.getText();
-            searchInFile(searchQueryText);
+            System.out.println(searchInFile(searchQueryText));
         }
     }
     public static void main( String[] args )
