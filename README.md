@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/Twolar/251-Assignment1-James-Taylor.svg?token=BkeWHsxqq554WZbYApwz&branch=master)](https://travis-ci.com/Twolar/251-Assignment1-James-Taylor)
+
 # 251-Assignment1-James-Taylor
 
 ## James Waddell (16379344)
