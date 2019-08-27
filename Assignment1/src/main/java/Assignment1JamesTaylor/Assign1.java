@@ -13,22 +13,12 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 
-//import java.awt.print.*;
-//import javax.print.PrintService;
-
 import org.apache.commons.io.FilenameUtils;
-//import org.fife.ui.rtextarea.*;
 import org.fife.ui.rsyntaxtextarea.*;
 
 import javax.swing.*;
 import java.awt.event.*;
 
-
-
-/**
- * Hello world!
- *
- */
 public class Assign1 extends JFrame implements ActionListener{
     private static final long serialVersionUID = 1L;
     private JMenuBar menuBar;
@@ -43,16 +33,21 @@ public class Assign1 extends JFrame implements ActionListener{
     private int findPosition = -1;
     
     public Assign1(boolean isWindow){
-        // create the frame
+        // Create main JFrame
         super("[Scribe]");
 
+        // New window or Main window condition.
         // Exiting original window terminates program, exiting any new Windows only terminates those window instances.
         if(isWindow) {
             this.dispose();
         } else {
             this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         }
+        
+        // Set size of main JFrame
         this.setSize(800, 600);
+
+        // Set location of main JFrame to be centered
         this.setLocationRelativeTo(null);
 
         // This creates main menu bar options 
@@ -109,7 +104,6 @@ public class Assign1 extends JFrame implements ActionListener{
         aboutOption.add(infoOption);
 
         //Action listners
-
         //File
         newOption.addActionListener(this);
         saveOption.addActionListener(this);
@@ -117,25 +111,22 @@ public class Assign1 extends JFrame implements ActionListener{
         exportPdfOption.addActionListener(this);
         printOption.addActionListener(this);
         exitOption.addActionListener(this);
-
         //Edit
         selectOption.addActionListener(this);
         copyOption.addActionListener(this);
         pasteOption.addActionListener(this);
         cutOption.addActionListener(this);
-
         //Search
         searchButton.addActionListener(this);
-
         //About
         timeOption.addActionListener(this);
         infoOption.addActionListener(this);
 
         // Create and add the text area
         textArea = new RSyntaxTextArea();
-
         JScrollPane scrollPane = new JScrollPane(textArea);
         this.add(scrollPane);
+
         // Make the window/frame visible.
         this.setVisible(true);
     }
@@ -143,6 +134,7 @@ public class Assign1 extends JFrame implements ActionListener{
         textArea.setText("");
     }
     
+    // Swtich case to determine incoming file type/extension
     public String getFileType(String ex){
         switch(ex){
             case ".c":
@@ -174,12 +166,12 @@ public class Assign1 extends JFrame implements ActionListener{
             case ".bat":
                 return SyntaxConstants.SYNTAX_STYLE_WINDOWS_BATCH;
             case ".odt":
-                //do something here
             default:
                 return SyntaxConstants.SYNTAX_STYLE_NONE;
         }
     }
 
+    // Save File Function
     public void saveFile(File file){
         String extension = "";
         int index = -1;
@@ -197,6 +189,7 @@ public class Assign1 extends JFrame implements ActionListener{
         }
     }
 
+    // Open File Function
     public boolean openFile(File file){
         try{
             FileReader fReader = new FileReader(file);
@@ -220,6 +213,8 @@ public class Assign1 extends JFrame implements ActionListener{
         }
         return true;
     }
+
+    // UserInput Search Function
     public int searchInFile(String input){
         findPosition = textArea.getText().indexOf(input, findPosition + 1);
         if(input != null){
@@ -235,6 +230,7 @@ public class Assign1 extends JFrame implements ActionListener{
         return findPosition;
     }
 
+    // Export Document to PDF Function
     public void exportToPdf(){
         JFileChooser saveFileChooser = new JFileChooser("./");
         int result = saveFileChooser.showSaveDialog(this);
@@ -244,7 +240,7 @@ public class Assign1 extends JFrame implements ActionListener{
             if (FilenameUtils.getExtension(newFile.getName()).equalsIgnoreCase("pdf")) {
                 // Leave file name how it is
             } else {
-                    // If extension != pdf, then replace with .pdf. Or if there is no extension, add .pdf
+                // If extension != pdf, then replace with .pdf. Or if there is no extension, add .pdf
                 newFile = new File(newFile.getParentFile(), FilenameUtils.getBaseName(newFile.getName())+".pdf"); 
             }
             // create output stream to newfile based off whats typed or selected as the save file name in saveDialog
@@ -270,6 +266,7 @@ public class Assign1 extends JFrame implements ActionListener{
         }
     }
 
+    // Print Document Function
     public void printFile(){
         try {
             boolean printDone = textArea.print();
@@ -284,6 +281,7 @@ public class Assign1 extends JFrame implements ActionListener{
         }
     }
 
+    // Function to display Scribe TextEditor information in PopUp window.
     public void displayInfo(){
         // Create new JFrame for Popup
         popUp = new JFrame("Info");
@@ -301,18 +299,20 @@ public class Assign1 extends JFrame implements ActionListener{
         popUp.setVisible(true);
     }
 
+    // Action Performed
     public void actionPerformed(ActionEvent event) {
         JComponent source = (JComponent) event.getSource(); //get the source
-        if(source == timeOption){
+
+        if(source == timeOption){ // When user clicks About -> Date & Time
             LocalDateTime nowDateTime = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
             String formattedDateTime = nowDateTime.format(formatter);
             this.setTitle("[Scribe] Current Date: " + formattedDateTime);
-        }else if(source == infoOption){ // If user clicks Info option
+        }else if(source == infoOption){ // When user clicks About -> Info
             displayInfo();
-        }else if(source == newOption){
+        }else if(source == newOption){ // When user clicks File -> New
             new Assign1(true);
-        }else if(source == openOption){
+        }else if(source == openOption){ // When user clicks File -> Open
             JFileChooser openFileChooser = new JFileChooser("./");
             int result = openFileChooser.showOpenDialog(this);
             if(result == JFileChooser.APPROVE_OPTION){
@@ -322,44 +322,40 @@ public class Assign1 extends JFrame implements ActionListener{
             }else{
                 System.out.println("Error: Could not open file.");
             }  
-        }else if(source == saveOption){
+        }else if(source == saveOption){ // When user clicks File -> Save
             JFileChooser saveFileChooser = new JFileChooser("./");
             int result = saveFileChooser.showSaveDialog(this);
             if(result == JFileChooser.APPROVE_OPTION){
                 File newFile = saveFileChooser.getSelectedFile();
                 saveFile(newFile);
             }
-        }else if(source == exportPdfOption){
+        }else if(source == exportPdfOption){ // When user clicks File -> ExportAsPDF
             exportToPdf();
-        }else if(source == printOption){
+        }else if(source == printOption){ // When user clicks File -> Print
             printFile();
-        }else if(source == exitOption){
-            //Exit Button clicked
+        }else if(source == exitOption){ // When user clicks File -> Exit
             System.exit(0);
-        }else if(source == selectOption){
-            //Select Button clicked
+        }else if(source == selectOption){ // When user clicks Edit -> Select
             textArea.selectAll();            
-        }else if(source == copyOption){
-            //Copy Button clicked
+        }else if(source == copyOption){ // When user clicks Edit -> Copy
             String text  = textArea.getSelectedText();
             Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
             StringSelection data = new StringSelection(text);
             clip.setContents(data, null);
-        }else if(source == pasteOption){
-            //Paste Button clicked
+        }else if(source == pasteOption){ // When user clicks Edit -> Paste
             try {
                 String text = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
                 textArea.insert(text, textArea.getCaretPosition());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }else if(source == cutOption){
+        }else if(source == cutOption){ // When user clicks Edit -> Cut
             String text  = textArea.getSelectedText();
             textArea.setText(textArea.getText().replace(textArea.getSelectedText(),""));
             Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
             StringSelection data = new StringSelection(text);
             clip.setContents(data, null);
-        }else if(source.equals(searchButton)){
+        }else if(source.equals(searchButton)){ // When user clicks Search
             searchQueryText = searchInputField.getText();
             System.out.println(searchInFile(searchQueryText));
         }
