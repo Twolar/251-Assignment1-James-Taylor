@@ -302,12 +302,13 @@ public class Assign1 extends JFrame implements ActionListener{
     // Action Performed
     public void actionPerformed(ActionEvent event) {
         JComponent source = (JComponent) event.getSource(); //get the source
-
         if(source == timeOption){ // When user clicks About -> Date & Time
             LocalDateTime nowDateTime = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
             String formattedDateTime = nowDateTime.format(formatter);
-            this.setTitle("[Scribe] Current Date: " + formattedDateTime);
+            //Insert time and date at top of page
+            textArea.insert(formattedDateTime+"\n", 0);
+            textArea.setCaretPosition(0);
         }else if(source == infoOption){ // When user clicks About -> Info
             displayInfo();
         }else if(source == newOption){ // When user clicks File -> New
