@@ -1,0 +1,9 @@
+Code Size 
+- Total LOC = 306
+- Number of classes = 1
+- Number of Methods = 10 (Mean = 10, Maximum = 10)
+- Name of largest class file = Assign1.java
+
+Complexity
+- Cyclomatic Complexity(Mean = 5, Maximum = 17)
+- Efferent Coupling = 1
