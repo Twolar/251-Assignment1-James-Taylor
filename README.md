@@ -16,8 +16,8 @@
 - Implementation of being able to open source files and have syntax show different colours. 
 (this also applies to live typing based on file type).
 
-### Significant Commits
-## Taylor
+## Significant Commits
+### Taylor
 - 23409324e926791c102b5c636e4df36f35878484
 - b261af0b3bd259e7da61a8763cde8d5f9af919d4
 - 8849d895e9767539c20412c96e9f1cf73e399633
@@ -25,4 +25,4 @@
 - 5d34e79ccb824ff7b4d173a9366c104414bd1c88
 - 2b8ad4509cfeb59d03be2e6e776a38a41ea42c69
 
-## James
+### James
