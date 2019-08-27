@@ -7,15 +7,12 @@ import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
-
 import org.apache.commons.io.FilenameUtils;
 import org.fife.ui.rsyntaxtextarea.*;
-
 import javax.swing.*;
 import java.awt.event.*;
 
@@ -35,7 +32,6 @@ public class Assign1 extends JFrame implements ActionListener{
     public Assign1(boolean isWindow){
         // Create main JFrame
         super("[Scribe]");
-
         // New window or Main window condition.
         // Exiting original window terminates program, exiting any new Windows only terminates those window instances.
         if(isWindow) {
@@ -43,19 +39,15 @@ public class Assign1 extends JFrame implements ActionListener{
         } else {
             this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         }
-        
         // Set size of main JFrame
         this.setSize(800, 600);
-
         // Set location of main JFrame to be centered
         this.setLocationRelativeTo(null);
-
-        // This creates main menu bar options 
+        // Create main menu bar options 
         fileOption = new JMenu("File");
         editOption = new JMenu("Edit");
         searchOption = new JMenu("Search");
         aboutOption = new JMenu("About");
-
 	    // Create main menuBar and add options to it
 	    menuBar = new JMenuBar();
         this.setJMenuBar(menuBar);
@@ -63,7 +55,6 @@ public class Assign1 extends JFrame implements ActionListener{
         menuBar.add(editOption);
         menuBar.add(aboutOption);
         menuBar.add(searchOption);
-	    
 	    // Create search dropdown panel and add to menuBar search
         searchDropDownPanel = new JPanel();
         searchInputField = new JTextField(30);
@@ -71,23 +62,21 @@ public class Assign1 extends JFrame implements ActionListener{
         searchDropDownPanel.add(searchInputField);
         searchDropDownPanel.add(searchButton);
         searchOption.add(searchDropDownPanel);
-        
-        // this create the sub menu for the option "File" in the main menu bar
+        // Create the sub menu for the option "File" in the main menu bar
         newOption = new JMenuItem("New");
         openOption = new JMenuItem("Open");
         saveOption = new JMenuItem("Save As");
         exportPdfOption = new JMenuItem("Export As PDF");
         printOption = new JMenuItem("Print");
         exitOption = new JMenuItem("Exit");
-
+        // Add JMenuItems to option "File"
         fileOption.add(newOption);
         fileOption.add(openOption);
         fileOption.add(saveOption);
         fileOption.add(exportPdfOption);
         fileOption.add(printOption);
         fileOption.add(exitOption);
-
-        // this create the sub menu for the option "Edit" in the main menu bar
+        // Create the sub menu for the option "Edit" in the main menu bar
         selectOption = new JMenuItem("Select All");
         copyOption = new JMenuItem("Copy");
         pasteOption = new JMenuItem("Paste");
@@ -97,13 +86,12 @@ public class Assign1 extends JFrame implements ActionListener{
         editOption.add(pasteOption);
         editOption.add(cutOption);
 
-        // this create the sub menu for the option "About" in the main menu bar
+        // Create the sub menu for the option "About" in the main menu bar
         timeOption = new JMenuItem("Time and Date");
         infoOption = new JMenuItem("Info");
         aboutOption.add(timeOption);
         aboutOption.add(infoOption);
-
-        //Action listners
+        //Add Action listners
         //File
         newOption.addActionListener(this);
         saveOption.addActionListener(this);
@@ -121,19 +109,19 @@ public class Assign1 extends JFrame implements ActionListener{
         //About
         timeOption.addActionListener(this);
         infoOption.addActionListener(this);
-
         // Create and add the text area
         textArea = new RSyntaxTextArea();
         JScrollPane scrollPane = new JScrollPane(textArea);
         this.add(scrollPane);
-
         // Make the window/frame visible.
         this.setVisible(true);
     }
+
+    //Used to remove text from the screen
     void clearScreen(){
         textArea.setText("");
     }
-    
+
     // Swtich case to determine incoming file type/extension
     public String getFileType(String ex){
         switch(ex){
@@ -361,9 +349,8 @@ public class Assign1 extends JFrame implements ActionListener{
             System.out.println(searchInFile(searchQueryText));
         }
     }
-    public static void main( String[] args )
-    {
-        System.out.println( "Starting App..." );
+    
+    public static void main( String[] args ){
         new Assign1(false);
     }   
 }
