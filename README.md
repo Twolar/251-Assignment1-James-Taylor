@@ -2,6 +2,9 @@
 
 # 251-Assignment1-James-Taylor
 
+# Scribe Text Editor
+
+Authored by:
 ## James Waddell (16379344)
 ## Taylor Bennett (16105740)
 
